@@ -1,10 +1,10 @@
 # model settings
 model = dict(
     type='FasterRCNN',
-    pretrained='modelzoo://resnet50',
+    pretrained='work_dirs/pretrained_models/resnet101-5d3b4d8f.pth',
     backbone=dict(
         type='ResNet',
-        depth=50,
+        depth=101,
         num_stages=4,
         out_indices=(0, 1, 2, 3),
         frozen_stages=1,
@@ -22,7 +22,7 @@ model = dict(
         in_channels=256,
         feat_channels=256,
         anchor_scales=[8],
-        anchor_ratios=[0.5, 1.0, 2.0],
+        anchor_ratios=[0.25, 0.5, 1.0, 2.0, 4.0],  #[0.5, 1.0, 2.0],
         anchor_strides=[4, 8, 16, 32, 64],
         target_means=[.0, .0, .0, .0],
         target_stds=[1.0, 1.0, 1.0, 1.0],
@@ -106,13 +106,13 @@ data_root = 'data/terror_post/coco/'
 img_norm_cfg = dict(
     mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375], to_rgb=True)
 data = dict(
-    imgs_per_gpu=4, # default: 2
+    imgs_per_gpu=2, # default: 2
     workers_per_gpu=2,
     train=dict(
         type=dataset_type,
         ann_file=data_root + 'annotations/wa_v1.3.01_trainval.json',
         img_prefix=data_root + 'images/',
-        img_scale=(1333, 800),
+        img_scale=[(1500, 1000), (1333, 800), (1000, 600), (800, 400)],
         img_norm_cfg=img_norm_cfg,
         size_divisor=32,
         flip_ratio=0.5,
@@ -123,7 +123,7 @@ data = dict(
         type=dataset_type,
         ann_file=data_root + 'annotations/wa_v1.3.01_test.json',
         img_prefix=data_root + 'images/',
-        img_scale=(1333, 800),
+        img_scale=(1000, 600), #(1333, 800),
         img_norm_cfg=img_norm_cfg,
         size_divisor=32,
         flip_ratio=0,
@@ -134,7 +134,7 @@ data = dict(
         type=dataset_type,
         ann_file=data_root + 'annotations/wa_v1.3.01_test.json',
         img_prefix=data_root + 'images/',
-        img_scale=(1333, 800),
+        img_scale=(1000, 600), #(1333, 800),
         img_norm_cfg=img_norm_cfg,
         size_divisor=32,
         flip_ratio=0,
@@ -142,7 +142,7 @@ data = dict(
         with_label=False,
         test_mode=True))
 # optimizer
-optimizer = dict(type='SGD', lr=0.02, momentum=0.9, weight_decay=0.0001)
+optimizer = dict(type='SGD', lr=0.01, momentum=0.9, weight_decay=0.0001)
 optimizer_config = dict(grad_clip=dict(max_norm=35, norm_type=2))
 # learning policy
 lr_config = dict(
@@ -150,7 +150,7 @@ lr_config = dict(
     warmup='linear',
     warmup_iters=500,
     warmup_ratio=1.0 / 3,
-    step=[8, 11])
+    step=[14, 18])
 checkpoint_config = dict(interval=1)
 # yapf:disable
 log_config = dict(
@@ -161,7 +161,7 @@ log_config = dict(
     ])
 # yapf:enable
 # runtime settings
-total_epochs = 12
+total_epochs = 20
 dist_params = dict(backend='nccl')
 log_level = 'INFO'
 work_dir = './work_dirs/terror_post/faster_rcnn_dconv_c3-c5_r101_fpn_1x/'

@@ -6,5 +6,8 @@ source activate open-mmlab
 
 cd ../../
 
-nohup ./tools/dist_train.sh configs/terror_post/faster_rcnn_dconv_c3-c5_r50_fpn_1x.py 4 --validate \
-        > terror_post_faster_rcnn_dconv_c3-c5_r50_fpn_1x_v0.3.log 2>&1 &
+work=terror_post
+arch=faster_rcnn_ohem_r101_fpn_1x
+
+nohup ./tools/dist_train.sh configs/${work}/${arch}.py 4 --validate \
+        > ${work}_${arch}_v0.13.log 2>&1 &
